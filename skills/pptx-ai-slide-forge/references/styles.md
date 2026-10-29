@@ -10,13 +10,15 @@ single source of truth the agent translates into three artifacts:
 | `glass_card_system`, `card_variants`, `layout_system`, `micro_details` | slide layout recipes (`references/slide-patterns.md`) |
 | `design_constraints`, `negative_prompt` | QA checklist items (what a reviewer must reject) |
 
-Four complete specs ship with this skill (below): **Midnight Electric Blue**,
+Five complete specs ship with this skill (below): **Midnight Electric Blue**,
 **NovaPay — Liquid Electric Blue** (dark; the second one built the worked example deck
 end to end), **Clean Blue Tech** (light corporate — flat backgrounds + vector decor
-overlays instead of the texture engine) and **Dark Emerald Strategy** (dark executive
-roadmap — emerald glow via the liquid engine with an emerald palette). All were
-authored by visual analysis of reference images — treat every HEX/size as a tuned
-approximation, not extracted design tokens.
+overlays instead of the texture engine), **Dark Emerald Strategy** (dark executive
+roadmap — emerald glow via the liquid engine with an emerald palette) and **Obsidian
+Ember** (industrial editorial — near-black to burgundy with molten orange highlights,
+via the liquid engine with an ember palette). All were authored by visual analysis of
+reference images — treat every HEX/size as a tuned approximation, not extracted
+design tokens.
 
 Units: background specs speak **px at 1920x1080**; the PPTX canvas is 13.333 x 7.5 in,
 so **1 px at 1920 = 0.5 pt** on the slide (e.g. headline 80 px → 40 pt, radius 18 px →
@@ -656,6 +658,81 @@ palette (base `#050C0F → #0D2424 → #164F3D`, glows `#51E9A0` top-right, rims
   "avoid": ["Bright multicolor palettes", "White-dominant backgrounds", "Heavy borders",
     "Dense paragraphs", "Unnecessary 3D illustrations", "Tiny text", "Low-contrast captions",
     "Flattened slide screenshots"]
+}
+```
+
+---
+
+## Style 5: Obsidian Ember
+
+Industrial editorial; the liquid texture engine drives it with an ember palette
+(base `#050505 → #090708 → #300015 → #47001D`, hot-orange glow top-right, copper
+ribbons with `#FFB380` rims).
+
+```json
+{
+  "style_id": "obsidian-ember",
+  "name": "Obsidian Ember",
+  "category": "Industrial Tech / SaaS / Corporate Editorial",
+  "description": "High-contrast dark editorial presentation combining near-black and burgundy backgrounds, molten orange-red highlights, oversized white typography, dramatic industrial 3D renders and precision grids.",
+  "canvas": {
+    "aspect_ratio": "16:9", "background": "#090708", "safe_margin_percent": 4.5
+  },
+  "color_palette": {
+    "black": "#050505", "obsidian": "#090708", "deep_burgundy": "#300015",
+    "plum_wine": "#47001D", "burnt_red": "#8E1015", "ember_red": "#E32820",
+    "industrial_orange": "#F05A12", "hot_orange": "#FF6A00",
+    "white": "#F9F7F5", "text_secondary": "#BBB1B2"
+  },
+  "theme_variants": {
+    "saas_crimson": {"background": "#300015", "accent": "#E32820",
+      "gradient": "Burgundy with subtle red radial glow",
+      "imagery": "Red-lit technology portraits and AI products",
+      "best_for": "AI, SaaS, startup pitch decks"},
+    "industrial_ember": {"background": "#050505", "accent": "#F05A12",
+      "gradient": "Black with copper-orange directional lighting",
+      "imagery": "Metallic 3D objects, gears and machinery",
+      "best_for": "Engineering, manufacturing, industrial B2B"}
+  },
+  "typography": {
+    "family": "Inter, Arial, Helvetica Neue",
+    "cover_title": {"size_pt": 55, "weight": "extra-bold", "case": "uppercase",
+      "color": "#F9F7F5"},
+    "heading": {"size_pt": 31, "weight": "bold", "color": "#F9F7F5"},
+    "body": {"size_pt": 15, "color": "#BBB1B2"},
+    "metric": {"size_pt": 30, "weight": "bold", "color": "#F9F7F5"}
+  },
+  "visual_style": {
+    "aesthetic": "Cinematic industrial editorial brutalism", "contrast": "very high",
+    "whitespace": "medium-to-high",
+    "materials": ["Blackened steel", "Brushed aluminum", "Copper", "Dark glossy acrylic"],
+    "lighting": "Dramatic orange rim lighting and deep shadows",
+    "effects": ["Red-orange radial gradients", "Subtle cinematic glow",
+      "Thin technical gridlines", "Small orange plus markers", "Vertical warm light beams"]
+  },
+  "layout": {
+    "grid_columns": 12,
+    "preferred_compositions": ["Oversized editorial headlines",
+      "Asymmetric text and 3D hero objects", "Split-screen images and content",
+      "Three-column KPI layouts", "Technical comparison tables",
+      "Before-and-after workflow diagrams", "Industry service matrices",
+      "Large typography statement slides"]
+  },
+  "graphics": {
+    "icons": "minimal orange outline icons", "charts": "editable dark charts with orange and red series",
+    "tables": "dark burgundy cells with orange highlights",
+    "diagrams": "outlined rectangles with red-orange arrows", "dividers": "thin subtle technical lines"
+  },
+  "slide_patterns": ["cover", "problem", "product_introduction", "performance_impact",
+    "workflow_comparison", "business_model", "industrial_capabilities", "industries",
+    "company_metrics", "statement", "closing_cta"],
+  "pptx_requirements": {"editable_text": true, "editable_shapes": true, "editable_tables": true,
+    "editable_charts": true, "editable_diagrams": true, "high_resolution_3d_images": true,
+    "avoid_text_overflow": true, "minimum_body_text_pt": 14,
+    "do_not_rasterize_entire_slides": true},
+  "avoid": ["Pastel palettes", "White backgrounds", "Cartoon illustrations",
+    "Rainbow gradients", "Excessively rounded cards", "Unnecessary visual clutter",
+    "Low contrast text", "Too many 3D objects per slide"]
 }
 ```
 
