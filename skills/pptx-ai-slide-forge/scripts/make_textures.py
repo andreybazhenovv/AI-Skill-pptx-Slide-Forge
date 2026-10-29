@@ -31,7 +31,7 @@ import importlib.util
 import os
 
 import numpy as np
-from PIL import Image, ImageFilter
+from PIL import Image, ImageDraw, ImageFilter
 
 W, H = 1920, 1080
 SS = 2                      # supersample factor
@@ -132,6 +132,190 @@ def add_ribbon(img, xs, ys, cfg):
     return img
 
 
+# ------------------------------------------------- v1.1 composable layers
+
+def _path_points(path, n=360):
+    """Sample a path to n (x, y) points in inches.
+
+    kinds:
+      arc    - circular arc: cx, cy, r, a0, a1 (degrees)
+      ring   - closed circle: cx, cy, r
+      bezier - cubic swoosh: pts = [[x0,y0],[x1,y1],[x2,y2],[x3,y3]]
+    """
+    kind = path.get("kind", "arc")
+    if kind in ("arc", "ring"):
+        cx, cy, r = path["cx"], path["cy"], path["r"]
+        a0 = np.deg2rad(path.get("a0", 0.0))
+        a1 = np.deg2rad(path.get("a1", 360.0 if kind == "ring" else 270.0))
+        th = np.linspace(a0, a1, n)
+        return cx + r * np.cos(th), cy + r * np.sin(th), kind == "ring"
+    if kind == "bezier":
+        p = [np.asarray(pt, dtype=np.float64) for pt in path["pts"]]
+        t = np.linspace(0.0, 1.0, n)[:, None]
+        xy = ((1 - t) ** 3 * p[0] + 3 * (1 - t) ** 2 * t * p[1]
+              + 3 * (1 - t) * t ** 2 * p[2] + t ** 3 * p[3])
+        return xy[:, 0], xy[:, 1], False
+    raise ValueError(f"unknown path kind {kind!r}")
+
+
+def _ramp(n, c1, c2, skew=1.0):
+    s = np.clip(np.linspace(0.0, 1.0, n) ** skew, 0, 1)
+    a, b = hx(c1), hx(c2)
+    return a[None, :] * (1 - s[:, None]) + b[None, :] * s[:, None]
+
+
+def add_path_ribbon(img, xs, ys, cfg):
+    """A glossy ribbon along an arbitrary path (arc / ring / bezier swoosh).
+
+    Same cross-section language as straight ribbons - broad glass body with
+    narrow icy edge speculars - implemented as an anti-aliased stroke whose
+    mask gradient produces the rims, so it works on any curvature."""
+    Hs, Ws = img.shape[:2]
+    px_in, py_in, closed = _path_points(cfg["path"], cfg.get("samples", 360))
+    pts = list(zip((px_in * PX_IN).tolist(), (py_in * PX_IN).tolist()))
+    if closed and pts[0] != pts[-1]:
+        pts.append(pts[0])
+    wpx = max(2, int(cfg.get("w0", 0.9) * PX_IN))
+    soft = cfg.get("soft", 10) * SS * 0.5
+
+    body = Image.new("RGB", (Ws, Hs), (0, 0, 0))
+    db = ImageDraw.Draw(body)
+    cols = _ramp(len(pts), cfg["c1"], cfg["c2"], cfg.get("skew", 1.0))
+    for i in range(len(pts) - 1):
+        db.line([pts[i], pts[i + 1]], fill=tuple(int(v) for v in cols[i]),
+                width=wpx, joint="curve")
+
+    mask_img = Image.new("L", (Ws, Hs), 0)
+    ImageDraw.Draw(mask_img).line(pts, fill=255, width=wpx, joint="curve")
+    mask = np.asarray(mask_img.filter(ImageFilter.GaussianBlur(soft * 0.7)),
+                      dtype=np.float64) / 255.0
+    gy, gx = np.gradient(mask)
+    rim = np.clip(np.hypot(gx, gy) * cfg.get("rim_gain", 22.0), 0, 1)
+
+    layer = np.asarray(body.filter(ImageFilter.GaussianBlur(soft)),
+                       dtype=np.float64)
+    a = np.clip(mask * cfg.get("alpha", 0.85), 0, 0.92)
+    if cfg.get("depth") == "back":
+        layer = np.asarray(Image.fromarray(
+            np.clip(layer, 0, 255).astype(np.uint8)).filter(
+            ImageFilter.GaussianBlur(cfg.get("blur", 40) * SS * 0.5)),
+            dtype=np.float64)
+        a = np.clip(a * 0.85, 0, 0.8)
+    elif cfg.get("depth") == "mid":
+        layer = np.asarray(Image.fromarray(
+            np.clip(layer, 0, 255).astype(np.uint8)).filter(
+            ImageFilter.GaussianBlur(6 * SS)), dtype=np.float64)
+
+    if cfg.get("blend", "normal") == "screen":
+        img[:] = 255 - (255 - img) * (255 - np.clip(layer, 0, 255)) / 255
+    else:
+        img[:] = img * (1 - a[..., None]) + layer * a[..., None]
+    if cfg.get("rim_alpha", 0.55) > 0:
+        img += (rim * cfg.get("rim_alpha", 0.55))[..., None] * \
+            hx(cfg.get("rim", "C1E1FF"))[None, None, :]
+    return img
+
+
+def add_scatter(img, xs, ys, cfg):
+    """Dot-grid field with radial falloff - a quiet technological layer."""
+    pitch = cfg.get("pitch", 26) * SS
+    dsize = max(1, int(cfg.get("dot", 3) * SS * 0.5))
+    dots = ((xs % pitch) < dsize * 2) & ((ys % pitch) < dsize * 2)
+    g = gate_mask(xs, ys, cfg.get("gates", []))
+    if cfg.get("focus"):
+        f = cfg["focus"]
+        fx, fy = f[0], f[1]
+        r_in = f[2] if len(f) > 2 else 6.0
+        d = np.hypot(xs - fx * PX_IN, ys - fy * PX_IN) / (r_in * PX_IN)
+        g = g * np.clip(1 - d, 0, 1) ** cfg.get("falloff", 1.6)
+    a = dots * g * cfg.get("alpha", 0.14)
+    img += a[..., None] * hx(cfg.get("color", "5B8AD4"))[None, None, :]
+    return img
+
+
+def add_arc_field(img, xs, ys, cfg):
+    """Concentric thin arc field (HUD rings) - quiet radial instrumentation."""
+    Hs, Ws = img.shape[:2]
+    canvas = Image.new("L", (Ws, Hs), 0)
+    d = ImageDraw.Draw(canvas)
+    cx, cy = cfg["cx"] * PX_IN, cfg["cy"] * PX_IN
+    r0, r1 = cfg["r0"] * PX_IN, cfg["r1"] * PX_IN
+    n = cfg.get("count", 6)
+    a0, a1 = cfg.get("a0", 160.0), cfg.get("a1", 320.0)
+    for i in range(n):
+        r = r0 + (r1 - r0) * (i / max(1, n - 1))
+        w = max(1, int(cfg.get("width", 1.2) * SS * (1.0 if i % 2 == 0 else 0.6)))
+        d.arc([cx - r, cy - r, cx + r, cy + r], start=a0, end=a1,
+              fill=int(255 * (0.30 + 0.70 * ((i * 7) % 10) / 10)), width=w)
+    field = np.asarray(canvas.filter(
+        ImageFilter.GaussianBlur(cfg.get("soft", 3) * SS * 0.5)),
+        dtype=np.float64) / 255.0
+    g = gate_mask(xs, ys, cfg.get("gates", []))
+    img += (field * g * cfg.get("alpha", 0.5))[..., None] * \
+        hx(cfg.get("color", "7FB2FF"))[None, None, :]
+    return img
+
+
+def add_wireframe(img, xs, ys, cfg):
+    """Projected 3D heightfield wireframe (blueprint/HUD terrain). Fills ride on
+    a translucent RGBA overlay - occlusion without burying the strokes; rows are
+    drawn far -> near with brighter lines toward the viewer."""
+    Hs, Ws = img.shape[:2]
+    canvas = Image.new("RGBA", (Ws, Hs), (0, 0, 0, 0))
+    d = ImageDraw.Draw(canvas)
+    cols, rows = cfg.get("cols", 26), cfg.get("rows", 11)
+    x0, y0, wd, ht = cfg["x0"], cfg["y0"], cfg["w"], cfg["h"]
+    amp, fx, fy = cfg.get("amp", 0.85), cfg.get("fx", 2.2), cfg.get("fy", 1.6)
+    lift = cfg.get("lift", 0.42)
+    dx, dy = cfg.get("dx", 0.22), cfg.get("dy", 0.10)
+    fa = int(255 * cfg.get("fill_alpha", 0.38))
+    fill_c = tuple(int(c) for c in hx(cfg.get("fill_color", "0A1E3C")))
+    line_c = hx(cfg.get("line_color", "6FBCFF"))
+
+    def zz(u, v):
+        return amp * (0.55 * np.sin(u * fx + cfg.get("ph", 0.6))
+                      + 0.45 * np.cos(v * fy + u * 1.3))
+
+    grid = []
+    for j in range(rows + 1):
+        row = []
+        for i in range(cols + 1):
+            u, v = i / cols, j / rows
+            z = float(zz(u, v))
+            row.append(((x0 + u * wd + z * dx) * PX_IN,
+                        (y0 + v * ht - z * lift * ht * 0.5 + z * dy) * PX_IN))
+        grid.append(row)
+    for j in range(rows):
+        poly = [p for p in grid[j]] + [p for p in grid[j + 1]][::-1]
+        d.polygon(poly, fill=fill_c + (fa,))
+    # strokes in a second pass - polygon fills would otherwise overwrite the
+    # pixel values of lines drawn earlier (ImageDraw replaces, not blends)
+    for j in range(1, rows + 1):
+        near = (j - 1) / max(1, rows - 1)
+        floor = cfg.get("line_floor", 0.45)
+        c = tuple(int(v * (floor + (1 - floor) * near)) for v in line_c)
+        d.line(grid[j], fill=c + (255,),
+               width=max(1, int(cfg.get("line_w", 1.4) * SS)), joint="curve")
+    layer = np.asarray(canvas, dtype=np.float64)
+    rgb, a = layer[..., :3], layer[..., 3:] / 255.0
+    a = a * gate_mask(xs, ys, cfg.get("gates", []))[..., None] * cfg.get("alpha", 0.95)
+    img[:] = img * (1 - a) + rgb * a
+    return img
+
+
+def add_layer(img, xs, ys, layer):
+    kind = layer.get("type")
+    if kind == "path_ribbon":
+        return add_path_ribbon(img, xs, ys, layer)
+    if kind == "dots":
+        return add_scatter(img, xs, ys, layer)
+    if kind == "arc_field":
+        return add_arc_field(img, xs, ys, layer)
+    if kind == "wireframe":
+        return add_wireframe(img, xs, ys, layer)
+    raise ValueError(f"unknown layer type {kind!r}")
+
+
 def darken(img, xs, ys, zone):
     """zone = (x0, y0, x1, y1, strength, feather), inches. Smooth darkening box
     for text zones - keeps the layered background visible but subdued."""
@@ -161,6 +345,8 @@ def render_liquid(cfg, out_path):
         glow(img, *g)
     for rcfg in cfg.get("ribbons", []):
         img = add_ribbon(img, xs, ys, rcfg)
+    for layer in cfg.get("layers", []):
+        img = add_layer(img, xs, ys, layer)
     for zone in cfg.get("darken", []):
         img = darken(img, xs, ys, zone)
     if cfg.get("vignette", 0.35) > 0:

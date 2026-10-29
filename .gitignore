@@ -6,3 +6,4 @@ output/
 dist/
 *.pptx
 *.pdf
+out/

@@ -130,6 +130,28 @@ skill. Full details live in the references; this section is the working instruct
 - After generating: **open the PNGs and look at them**, then iterate the config.
   Numbers prove darkness; only eyes prove style.
 
+### Composable shape layers (v1.1)
+
+A slide-level `layers` list is drawn over the liquid base and **under** the text
+darken pass. Vocabulary: `path_ribbon` (arc / ring / bezier swoosh — glossy body with
+icy edge speculars on any curvature), `dots` (radial-falloff dot grid), `arc_field`
+(concentric HUD arcs), `wireframe` (projected 3D heightfield terrain). Blend modes:
+`normal` or `screen` (luminous overlay).
+
+Decision matrix:
+
+| Slide type | Layers |
+|---|---|
+| Hero cover | one `path_ribbon` swoosh or 1–2 rings, plus liquid ribbons |
+| Section divider | centered ring emblem (`path_ribbon` ring + `arc_field`) |
+| Content slide | `dots` field in one corner (+ optional quiet `arc_field`) |
+| Data / terrain slide | `wireframe` heightfield in a corner band |
+
+Restraint rules: ≤ 2 shape families per slide; the hero shape is singular; layers
+must not sit behind body text (the darken pass helps, but do not rely on it); quiet
+layers at `alpha` ≤ 0.5. Full parameter reference:
+[`references/background-engine.md`](references/background-engine.md).
+
 ## Hard Rules
 
 - Never invent facts, numbers, dates, authors, or verification statuses. An evidence
