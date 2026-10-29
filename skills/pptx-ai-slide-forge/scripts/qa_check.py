@@ -81,9 +81,15 @@ def main():
                     help="text overlap threshold, square inches (default 0.05)")
     args = ap.parse_args()
 
-    failures = []
+    if not os.path.isfile(args.deck):
+        raise SystemExit(f"deck not found: {args.deck}")
 
-    text = text_dump(args.deck)
+    failures = []
+    try:
+        text = text_dump(args.deck)
+    except Exception as e:
+        print(f"[FAIL] cannot extract text from {args.deck}: {e}")
+        raise SystemExit(2)
 
     if args.slides is not None:
         import re

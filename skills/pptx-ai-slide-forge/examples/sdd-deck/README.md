@@ -14,16 +14,21 @@ built, rendered, visually inspected, fixed, and shipped.
 
 ## Reproduce
 
+All paths are relative to this directory (`examples/sdd-deck/`). Backgrounds go to
+the skill-root `assets/`; the built deck lands next to the scripts
+(`scripts/spec-driven-development-ai-agents.pptx`).
+
 ```bash
-# 1. backgrounds (prints a luminance report per text zone)
+# 1. backgrounds → skill-root assets/ (prints a luminance report per text zone)
 python3 ../../scripts/make_textures.py --config textures_config.py --out ../../assets
 
-# 2. deck (adapt the slide sections for your own content)
+# 2. deck → scripts/spec-driven-development-ai-agents.pptx
+#    (adapt the slide sections in build_deck.py for your own content)
 python3 ../../scripts/build_deck.py
 
 # 3. render + inspect + text QA
-bash ../../scripts/render_qa.sh "$PWD/../../spec-driven-development-ai-agents.pptx" qa
-python3 ../../scripts/qa_check.py ../../spec-driven-development-ai-agents.pptx \
+bash ../../scripts/render_qa.sh "$PWD/../../scripts/spec-driven-development-ai-agents.pptx" qa
+python3 ../../scripts/qa_check.py ../../scripts/spec-driven-development-ai-agents.pptx \
     --slides 8 --contains "NOT RUN:4" --contains "GAP" --forbid "Спасибо"
 ```
 

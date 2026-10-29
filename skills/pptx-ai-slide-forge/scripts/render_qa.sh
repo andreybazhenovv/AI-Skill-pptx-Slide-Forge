@@ -4,8 +4,10 @@
 # Usage:
 #   ./render_qa.sh /abs/path/deck.pptx [outdir]
 #
-# Renders via Keynote (AppleScript). Output naming:
-#   <outdir>/<deck-basename>.001.png, .002.png, ... (one per slide)
+# Renders via Keynote (AppleScript). Output naming (IMPORTANT):
+#   Keynote names files after the OUTPUT DIRECTORY basename, not the deck:
+#   <outdir>/<outdir-basename>.001.png, .002.png, ... (one per slide)
+#   e.g. outdir "qa" → qa/qa.001.png; outdir "qa3" → qa3/qa3.001.png.
 #
 # KNOWN PITFALL (verified 2026-10-29, macOS): Microsoft PowerPoint's AppleScript
 #   `save ... as save as PNG`
@@ -21,6 +23,11 @@ set -euo pipefail
 
 DECK="${1:?usage: render_qa.sh /abs/path/deck.pptx [outdir]}"
 OUT="${2:-qa}"
+
+if [ ! -f "$DECK" ]; then
+    echo "deck not found: $DECK" >&2
+    exit 2
+fi
 
 mkdir -p "$OUT"
 OUT="$(cd "$OUT" && pwd)"
@@ -38,5 +45,5 @@ tell application "Keynote"
 end tell
 EOF
 
-BASE="$(basename "${DECK%.*}")"
+BASE="$(basename "$OUT")"
 echo "renders: $OUT/$BASE.001.png, $BASE.002.png, ..."

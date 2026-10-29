@@ -18,6 +18,12 @@ Targets, tuned on production:
 | Body/cards zone | ≤ ~22/255 |
 | Texture corners | 15–30/255 mean is plenty; peaks may be brighter |
 
+**Hero covers are the calibrated exception:** the headline zone may carry brighter
+accent luminance (production heroes measured 26–37/255) — the sweeping light
+streaks are the style's signature there. The cap that stays strict is CONTRAST:
+white text over a 25–35/255 zone still reads at ~10:1. Content slides keep the
+strict caps; heroes are measured, not assumed.
+
 Numbers prove darkness. Only your eyes prove style — always open the PNGs.
 
 ## Liquid engine (`"engine": "liquid"`)

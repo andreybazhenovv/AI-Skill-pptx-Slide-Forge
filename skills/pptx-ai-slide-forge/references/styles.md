@@ -30,7 +30,8 @@ so **1 px at 1920 = 0.5 pt** on the slide (e.g. headline 80 px → 40 pt, radius
 
 ```json
 {
-  "style_name": "Midnight Electric Blue",
+  "style_id": "midnight-electric-blue",
+  "name": "Midnight Electric Blue",
   "style_category": "Premium Tech / Futuristic Digital / Dark Editorial",
   "description": "Premium technological presentation style with a near-black background, saturated electric blue accents, large typography, 3D objects, glow and complex geometric textures.",
   "overall_mood": {
@@ -269,7 +270,8 @@ so **1 px at 1920 = 0.5 pt** on the slide (e.g. headline 80 px → 40 pt, radius
 
 ```json
 {
-  "style_name": "NovaPay — Liquid Electric Blue",
+  "style_id": "novapay-liquid-electric-blue",
+  "name": "NovaPay — Liquid Electric Blue",
   "style_category": "Premium Fintech / Liquid Glass / Futuristic Web Design",
   "design_philosophy": {
     "core_idea": "A premium tech presentation whose main visual expressiveness comes from dynamic blue 3D backgrounds, volumetric glossy ribbons, soft gradients and translucent interface underlays.",
