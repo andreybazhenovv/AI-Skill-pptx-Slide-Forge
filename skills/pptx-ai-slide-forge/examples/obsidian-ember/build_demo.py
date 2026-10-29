@@ -192,7 +192,7 @@ txt(s, ML, 2.3, 10.5, 2.2, [
 ])
 rect(s, ML, 4.62, 0.06, 0.9, ORANGE)
 txt(s, ML + 0.25, 4.6, 8.0, 0.95, [
-    {"runs": [("Spec-driven delivery for heavy-duty workloads - planned,", 15, SEC)], "ls": 1.3},
+    {"runs": [("Spec-driven delivery for heavy-duty workloads — planned,", 15, SEC)], "ls": 1.3},
     {"runs": [("verified and shipped without silent contract changes.", 15, SEC)], "ls": 1.3},
 ])
 pill(s, ML, 6.0, 3.6, 0.44, text="Spec → Plan → Code → Evidence", size=11)
@@ -233,7 +233,7 @@ for i, row in enumerate(after_rows):
 
 pill(s, 6.05, 3.85, 0.75, 0.6, fill=ORANGE, line=None, text="\u2192", size=20, color=BLACK)
 txt(s, ML, 6.55, 12.1, 0.4,
-    [{"runs": [("Same agent, different process: the workflow - not the model - decides "
+    [{"runs": [("Same agent, different process: the workflow — not the model — decides "
                 "whether the output can be trusted.", 13, SEC)], "ls": 1.2}])
 
 # ============================ SLIDE 3 — KPI METRICS ============================
@@ -260,7 +260,7 @@ for i, (num, cap, desc) in enumerate(kpis):
 plus(s, 12.45, 2.1)
 plus(s, 0.62, 5.9)
 txt(s, ML, 6.35, 12.1, 0.4,
-    [{"runs": [("Illustrative rollout targets - each verified per release in the "
+    [{"runs": [("Illustrative rollout targets — each verified per release in the "
                 "evidence matrix, not promised once.", 12.5, SEC)], "ls": 1.2}])
 
 prs.core_properties.title = "Enterprise AI infrastructure (Obsidian Ember demo)"
