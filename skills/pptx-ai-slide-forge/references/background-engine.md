@@ -101,3 +101,56 @@ to near-black toward all edges (floor 0.30 at 20% of width).
    mud (too many overlapping back layers — reduce alphas), flat background (add a
    corner glow or one more back ribbon), texture behind text (extend `darken`).
 3. Regenerate; re-look. Only then build the deck.
+
+## v1.1 composable shape layers
+
+A slide-level `layers` list is drawn over the liquid base and **under** the darken
+pass. Blend modes per layer: `normal` (alpha composite) or `screen` (luminous —
+black parts of the layer are no-ops, ideal for light streaks).
+
+### `path_ribbon` — glossy ribbon on any curvature
+
+`path`: `{"kind": "arc"|"ring"|"bezier", ...}` — arc/ring: `cx, cy, r, a0, a1`
+(degrees); bezier: `pts` = 4 control points. Rest of the fields: `w0` (width in),
+`soft` (blur px at 1920, default 10), `c1 → c2` color ramp along the path, `alpha`,
+`depth` (`back`/`mid`/front), `blend`, `rim`/`rim_alpha` (edge speculars via the
+mask **gradient magnitude**, so they follow any curvature), `samples` (360 default).
+
+### `dots` — radial-falloff dot grid
+
+`pitch`, `dot` (px at 1920), `focus: [fx, fy]` (inches; optional third value =
+radius, default 6 in), `falloff` (exponent), `alpha` (≤ 0.2 — quiet layer),
+`color`, `gates`.
+
+### `arc_field` — concentric HUD arcs
+
+`cx, cy, r0, r1, count`, `a0/a1` (degrees — partial arcs read as radar sweeps),
+`width`, `soft`, `alpha`, `color`, `gates`. Alternating stroke widths
+(1.0 / 0.6) add instrument feel.
+
+### `wireframe` — projected 3D heightfield terrain
+
+`x0, y0, w, h` (placement), `cols/rows` (mesh density), `amp, fx, fy, ph` (height
+field), `lift, dx, dy` (projection), `line_color`, `line_w`, `line_floor` (brightness
+of the farthest row; nearer rows brighten to 1.0), `fill_color`, `fill_alpha`
+(translucent occlusion), `alpha`, `gates`.
+
+**Implementation lessons (do not regress):**
+
+1. **Two passes on the RGBA canvas**: all polygons first, then all strokes.
+   `ImageDraw` *replaces* pixel values (no blending), so a polygon drawn after a
+   line overwrites the line's pixels — the mesh disappears (this bug shipped once).
+2. Occlusion is achieved with translucent fills (`fill_alpha` ≈ 0.35) on the RGBA
+   overlay, then alpha-compositing the whole layer onto the image.
+3. Brightness ramps toward the viewer (`line_floor → 1.0`) for depth.
+
+### Decision matrix
+
+| Slide type | Layers |
+|---|---|
+| Hero cover | one `path_ribbon` swoosh or 1–2 rings + liquid ribbons |
+| Section divider | centered ring emblem (`path_ribbon` ring + `arc_field`) |
+| Content slide | `dots` corner field (+ optional quiet `arc_field`) |
+| Data / terrain | `wireframe` heightfield in a corner band |
+
+Worked configs: [`examples/shape-gallery/textures_config.py`](../../examples/shape-gallery/textures_config.py).

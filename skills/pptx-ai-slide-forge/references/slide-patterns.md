@@ -105,3 +105,35 @@ def set_line_alpha(shp, pct):        # same, on the a:ln solidFill
 - Never invent facts, statuses, dates, authors. `NOT RUN` is a valid status.
 - No "Thank you" slide; no decorative icons; no clip-art; single accent family.
 - Geometry lint must pass: everything in bounds, no text overlaps > 0.05 sq in.
+
+## Vector decor overlays (PPTX-native)
+
+Raster backgrounds carry the heavy art; small crisp geometry can live as **editable
+PPTX shapes** above the background and below text — the reader can even tweak them
+afterward. Recipes:
+
+```python
+# HUD ring (editable): oval, no fill, thin luminous line
+ring = slide.shapes.add_shape(MSO_SHAPE.OVAL, IN(x), IN(y), IN(d), IN(d))
+ring.fill.background()
+ring.line.color.rgb = RGB("5BA7FF"); ring.line.width = Pt(1.0)
+no_shadow(ring)
+
+# Partial arc: MSO_SHAPE.ARC with adjustments (start/end angle, thickness)
+arc = slide.shapes.add_shape(MSO_SHAPE.ARC, IN(x), IN(y), IN(d), IN(d))
+arc.adjustments[0], arc.adjustments[1] = ...   # start/end angle fractions
+arc.fill.background(); arc.line.color.rgb = RGB("5BA7FF"); arc.line.width = Pt(1.2)
+
+# Node-edge graph: accent dots + straight connectors
+conn = slide.shapes.add_connector(MSO_CONNECTOR.STRAIGHT,
+                                  IN(x1), IN(y1), IN(x2), IN(y2))
+conn.line.color.rgb = RGB("5BA7FF"); conn.line.width = Pt(0.75)
+```
+
+**Network-visualization pattern** (right side of a data slide): center oval +
+5–7 satellite ovals (0.16–0.35 in), thin connectors, small status capsules near
+2–3 nodes. Keep decor within the same accent family and behind nothing.
+
+When to prefer raster vs vector: backgrounds and light flows → raster (part of
+`make_textures.py`); small crisp instrumentation that must stay sharp and editable →
+vector shapes.
