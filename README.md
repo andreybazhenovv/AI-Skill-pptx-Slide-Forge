@@ -61,17 +61,43 @@ with glow:
 
 More renders: `docs/images/`.
 
-## How it works
+## Workflow — how to work with the skill
 
-```
-intake → slide outline (approved by user, ghost deck test)
-      → style selection / custom style spec
-      → background generation (textures + luminance sanity)
-      → deck build (python-pptx, glass cards, accent cards, tables, flows)
-      → QA loop: render slides → visual inspection → fix (max 3 iterations)
-      → text QA (markitdown) + geometry lint (bounds, overlaps)
-      → deliver deck + QA report
-```
+The agent-facing workflow (with hard gates) lives in
+[`skills/pptx-ai-slide-forge/SKILL.md`](skills/pptx-ai-slide-forge/SKILL.md). The
+human-visible summary:
+
+| Step | What happens | Gate |
+|---|---|---|
+| 1. Intake & outline | Source material compressed into 7–10 slides with **action titles**; ghost-deck test (titles alone tell the argument); remaining decisions asked in one batch, each with a recommendation | user approves the outline |
+| 2. Style | A built-in style is chosen, or a new style JSON is authored with AI (recipe below) | theme tokens extracted |
+| 3. Backgrounds | Per-slide configs → `make_textures.py` → luminance report per text zone; **the PNGs are opened and looked at** | dark text zones + eyes agree |
+| 4. Build | `build_deck.py` adapted (theme tokens at the top, one section per slide) | geometry lint clean |
+| 5. Render QA | Every slide rendered to PNG and visually inspected | fix list empty (≤ 3 iterations) |
+| 6. Text QA | `qa_check.py`: slide count, key strings, forbidden strings | all green |
+| 7. Deliver | Deck + renders + a QA report stating exactly what was verified — and what was not | honest report |
+
+## Author your own style (JSON, with AI)
+
+A style is a **JSON specification** — the repo ships two complete examples in
+[`references/styles.md`](skills/pptx-ai-slide-forge/references/styles.md). To create a
+new one with AI:
+
+1. Collect inputs: 1–3 reference screenshots, brand HEX colors (or permission to
+   derive them), mood words, audience, deck language (the font must render Cyrillic
+   if the deck is Russian).
+2. Hand them to the AI with the ready-made prompt template from
+   [`references/styles.md` → *"Authoring a new style JSON with AI"*](skills/pptx-ai-slide-forge/references/styles.md#authoring-a-new-style-json-with-ai).
+   The JSON must define: canvas, palette with `dominant_color_ratio` (one accent
+   family), a layered `background_system` (base gradient + atmospheric glows +
+   volumetric forms — never a flat gradient), `glass_card_system` with explicit
+   opacities, single-font `typography`, `critical_visual_rules`, `negative_prompt`.
+3. Validate before mass production: fill every field (an empty field is style
+   drift), build **one dense test slide**, render it, compare with the references,
+   refine the JSON — not the slide.
+
+Unit conversion for implementation: **1 px at 1920 = 0.5 pt** on the 13.333 × 7.5 in
+slide; radius 18 px = 0.125 in; letter-spacing `spc` = 1/100 pt.
 
 ## Quick start
 
@@ -132,6 +158,7 @@ pptx-AI-Slide-Forge/
     ├── scripts/                     # make_textures.py, build_deck.py, qa_check.py, render_qa.sh
     ├── references/                  # styles.md, background-engine.md, slide-patterns.md, qa-and-toolchain.md
     ├── assets/                      # sample backgrounds
+    ├── examples/english-demo/       # 3-slide EN demo: build script + background configs
     └── examples/sdd-deck/           # worked example: 8-slide SDD deck (configs + content outline)
 ```
 
