@@ -16,6 +16,7 @@ Exits non-zero if any check fails. All numbers reported are from real runs —
 never report a pass you have not executed.
 """
 import argparse
+import os
 import sys
 
 from pptx import Presentation
@@ -24,18 +25,21 @@ EMU_IN = 914400
 
 
 def text_dump(path: str) -> str:
+    if not os.path.isfile(path):
+        raise SystemExit(f"deck not found: {path}")
     try:
         from markitdown import MarkItDown
         return MarkItDown().convert(path).text_content
-    except Exception:
-        prs = Presentation(path)
-        parts = []
-        for i, slide in enumerate(prs.slides, start=1):
-            parts.append(f"<!-- Slide number: {i} -->")
-            for shp in slide.shapes:
-                if shp.has_text_frame:
-                    parts.append(shp.text_frame.text)
-        return "\n".join(parts)
+    except Exception as e:
+        print(f"[warn] markitdown failed ({e}); falling back to python-pptx text walk")
+    prs = Presentation(path)
+    parts = []
+    for i, slide in enumerate(prs.slides, start=1):
+        parts.append(f"<!-- Slide number: {i} -->")
+        for shp in slide.shapes:
+            if shp.has_text_frame:
+                parts.append(shp.text_frame.text)
+    return "\n".join(parts)
 
 
 def geometry_lint(path: str, max_overlap: float):

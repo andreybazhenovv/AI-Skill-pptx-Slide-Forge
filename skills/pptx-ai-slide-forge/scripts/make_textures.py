@@ -425,9 +425,16 @@ def render(num, cfg, out_dir):
 
 
 def load_config(path):
+    if not os.path.isfile(path):
+        raise SystemExit(f"config not found: {path}")
     spec = importlib.util.spec_from_file_location("sf_textures_config", path)
     mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
+    try:
+        spec.loader.exec_module(mod)
+    except Exception as e:
+        raise SystemExit(f"config failed to load: {path}: {e}")
+    if not getattr(mod, "SLIDES", None):
+        raise SystemExit(f"config has no SLIDES dict: {path}")
     return mod
 
 
@@ -446,9 +453,12 @@ def main():
     for num in sorted(mod.SLIDES):
         cfg = mod.SLIDES[num]
         path = render(num, cfg, out_dir)
+        report = _report(Image.open(path), cfg.get("checks"))
         if strict:
-            for name, lum in _report(Image.open(path), cfg.get("checks")).items():
-                assert lum < max_lum, f"bg_{num:02d} [{name}] luminance {lum} >= {max_lum}"
+            for name, lum in report.items():
+                if lum >= max_lum:
+                    raise SystemExit(
+                        f"bg_{num:02d} [{name}] luminance {lum} >= {max_lum}")
     print("textures OK")
 
 
