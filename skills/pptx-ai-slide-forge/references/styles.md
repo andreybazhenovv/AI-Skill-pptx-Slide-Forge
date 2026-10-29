@@ -10,10 +10,13 @@ single source of truth the agent translates into three artifacts:
 | `glass_card_system`, `card_variants`, `layout_system`, `micro_details` | slide layout recipes (`references/slide-patterns.md`) |
 | `design_constraints`, `negative_prompt` | QA checklist items (what a reviewer must reject) |
 
-Two complete specs ship with this skill (below): **Midnight Electric Blue** and
-**NovaPay — Liquid Electric Blue**. Both were authored by visual analysis of reference
-images — treat every HEX/size as a tuned approximation, not extracted design tokens.
-The second one built a real 8-slide deck end to end (see `examples/`).
+Four complete specs ship with this skill (below): **Midnight Electric Blue**,
+**NovaPay — Liquid Electric Blue** (dark; the second one built the worked example deck
+end to end), **Clean Blue Tech** (light corporate — flat backgrounds + vector decor
+overlays instead of the texture engine) and **Dark Emerald Strategy** (dark executive
+roadmap — emerald glow via the liquid engine with an emerald palette). All were
+authored by visual analysis of reference images — treat every HEX/size as a tuned
+approximation, not extracted design tokens.
 
 Units: background specs speak **px at 1920x1080**; the PPTX canvas is 13.333 x 7.5 in,
 so **1 px at 1920 = 0.5 pt** on the slide (e.g. headline 80 px → 40 pt, radius 18 px →
@@ -477,6 +480,182 @@ so **1 px at 1920 = 0.5 pt** on the slide (e.g. headline 80 px → 40 pt, radius
     "background_priority": "Highest", "surface_priority": "Highest",
     "typography_priority": "High", "geometry_priority": "High",
     "important": "All colors and numeric parameters are recommendations based on visual analysis of the image, not exact properties of a source design file."}
+}
+```
+
+---
+
+## Style 3: Clean Blue Tech (light corporate)
+
+Light styles **skip the texture engine**: backgrounds stay flat/light, decor is
+vector overlays (`slide-patterns.md`), and the luminance logic inverts — keep text
+zones clean and light, use the accent sparsely (15%).
+
+```json
+{
+  "style_id": "blue-tech-corporate",
+  "name": "Clean Blue Tech",
+  "category": "Corporate Technology Presentation",
+  "description": "Premium minimalist technology presentation with white backgrounds, royal blue accents, photorealistic 3D product renders, isometric diagrams, clean typography and editorial layouts.",
+  "canvas": {
+    "aspect_ratio": "16:9", "orientation": "landscape", "background": "#F8FAFD",
+    "safe_margin_percent": 5,
+    "grid": {"columns": 12, "gutter": "medium", "alignment": "precise"}
+  },
+  "color_palette": {
+    "primary_blue": "#2456A0", "deep_blue": "#173A70", "electric_blue": "#3474C8",
+    "light_blue": "#DCE8F7", "ice_blue": "#EDF3FA", "white": "#FFFFFF",
+    "off_white": "#F8FAFD", "text_primary": "#202733", "text_secondary": "#7B8797",
+    "divider": "#DCE2E9",
+    "usage": {"white_and_light_backgrounds": "75%", "blue_accents": "15%",
+              "text_and_neutrals": "10%"}
+  },
+  "typography": {
+    "family": "Arial, Aptos or Helvetica Neue", "style": "modern geometric sans-serif",
+    "heading": {"size_pt": 28, "weight": "bold", "color": "#202733", "line_height": 1.1},
+    "section_number": {"size_pt": 34, "weight": "bold", "color": "#2456A0"},
+    "body": {"size_pt": 12, "weight": "regular", "color": "#7B8797", "line_height": 1.4},
+    "caption": {"size_pt": 9, "color": "#7B8797"},
+    "emphasis": "Bold headings, blue numbers and minimal decorative text"
+  },
+  "layout": {
+    "design_philosophy": ["Minimalist corporate editorial design",
+      "Strong asymmetric compositions", "Large negative space", "Precise modular grid",
+      "Clear visual hierarchy", "Product-focused storytelling", "Clean technical diagrams"],
+    "preferred_compositions": ["Left text with large right-side 3D object",
+      "Split-screen photography and information", "Three-column feature descriptions",
+      "Four-column product specifications", "Centered isometric technology ecosystem",
+      "Large section number with headline", "Full royal-blue table of contents"],
+    "whitespace": "high", "density": "low-to-medium", "alignment": "strict",
+    "corners": "square or subtly rounded"
+  },
+  "visual_style": {
+    "rendering": "premium photorealistic 3D",
+    "objects": ["White technological devices", "Wireless sensors", "Smart hardware",
+      "Spherical antenna systems", "Isometric computing modules", "Floating interface panels",
+      "Minimal technical platforms"],
+    "materials": ["Matte white plastic", "Glossy ceramic", "Brushed aluminum",
+      "Transparent glass", "Translucent blue acrylic"],
+    "lighting": {"type": "soft studio lighting", "temperature": "cool neutral",
+      "shadows": "soft ambient shadows", "highlights": "subtle blue reflections",
+      "contrast": "low-to-medium"},
+    "camera": {"angles": ["isometric", "three-quarter product view", "front perspective"],
+      "background": "white or pale blue gradient"}
+  },
+  "graphics": {
+    "icons": {"style": "thin line or small blue 3D", "color": "#2456A0", "consistency": "uniform"},
+    "diagrams": {"style": "minimal futuristic technical",
+      "elements": ["Circular wireless network maps", "Radial connection diagrams",
+        "Floating platform structures", "Thin connector lines", "Small blue data markers"]},
+    "charts": {"style": "clean and flat", "gridlines": "minimal",
+      "colors": ["#2456A0", "#70A3DD", "#B8D2EF"]},
+    "decorations": {"thin_lines": true, "blue_labels": true, "small_square_markers": true,
+      "subtle_gradients": true, "heavy_borders": false}
+  },
+  "slide_patterns": [
+    {"type": "cover", "layout": "left title, right 3D visualization", "background": "white",
+     "elements": ["Small blue square brand marker", "Large bold company or product title",
+       "Short subtitle", "Hero isometric 3D render", "Subtle technical background lines"]},
+    {"type": "table_of_contents", "background": "#2456A0",
+     "layout": "vertical title and six-item grid",
+     "elements": ["Oversized vertical white Contents title", "Numbered sections 01-06",
+       "Small descriptions in white", "Generous spacing"]},
+    {"type": "company_profile", "layout": "50/50 photo and text",
+     "elements": ["Architectural photography", "Bold headline overlay", "Company description",
+       "Small image strip", "Large numerical KPIs"]},
+    {"type": "product_overview", "layout": "technical specifications grid",
+     "elements": ["Product title", "Short introduction", "Small product renders",
+       "Feature descriptions", "Thin horizontal dividers"]},
+    {"type": "feature_ecosystem", "layout": "central isometric illustration",
+     "elements": ["Large central 3D technology ecosystem", "Floating mini-devices",
+       "Four feature descriptions", "Blue section marker"]},
+    {"type": "hero_product", "layout": "left text and right product render",
+     "elements": ["Large blue section number", "Bold product name", "Four feature icons",
+       "Oversized isolated 3D product"]},
+    {"type": "technical_hardware", "layout": "horizontal product render",
+     "elements": ["Large product title", "Photorealistic device render",
+       "Four technical benefit columns", "Small blue line icons"]},
+    {"type": "network_visualization", "layout": "left text, right circular diagram",
+     "elements": ["Large metric", "Short technical explanation", "Radial node network",
+       "Blue status labels"]}
+  ],
+  "branding": {"top_left": "small solid blue square marker",
+    "top_right": "small technical section label", "bottom_right": "tiny blue pagination square",
+    "branding_intensity": "subtle"},
+  "pptx_requirements": {"editable_text": true, "editable_shapes": true, "editable_charts": true,
+    "high_resolution_images": true, "consistent_margins": true,
+    "preserve_visual_hierarchy": true, "avoid_text_overflow": true,
+    "minimum_body_text_pt": 12},
+  "avoid": ["Bright multicolor palettes", "Heavy decorative elements", "Cartoon illustrations",
+    "Oversaturated gradients", "Thick borders", "Excessive text", "Inconsistent typography",
+    "Random icon styles", "Strong drop shadows", "Crowded compositions"],
+  "generation_prompt": "Create a premium futuristic corporate technology PowerPoint presentation. Use clean white backgrounds, royal blue accents, sophisticated asymmetric layouts, large negative space, precise Swiss-inspired typography, realistic isometric 3D hardware renders, translucent blue technical elements, fine dividers, blue numbered sections, modular feature grids and subtle studio lighting. Maintain a highly polished engineering and enterprise technology aesthetic. Every slide must look like part of one coherent professional presentation."
+}
+```
+
+---
+
+## Style 4: Dark Emerald Strategy
+
+Dark executive roadmap style; the liquid texture engine drives it with an emerald
+palette (base `#050C0F → #0D2424 → #164F3D`, glows `#51E9A0` top-right, rims
+`#B7F5D8`).
+
+```json
+{
+  "style_id": "dark-emerald-strategy",
+  "name": "Dark Emerald Strategy",
+  "category": "Product Strategy / Executive Roadmap",
+  "description": "Premium dark-mode presentation with emerald glow gradients, bold editorial typography, luminous metrics, translucent panels and minimalist strategic diagrams.",
+  "canvas": {
+    "aspect_ratio": "16:9", "background": "#050C0F", "safe_margin_percent": 5,
+    "grid": {"columns": 12, "alignment": "strict"}
+  },
+  "color_palette": {
+    "background": "#050C0F", "deep_teal": "#0D2424", "dark_emerald": "#164F3D",
+    "emerald_primary": "#51E9A0", "mint_bright": "#63F5B0", "mint_soft": "#B7F5D8",
+    "text_primary": "#F5FAF8", "text_secondary": "#B6C9C4", "surface_glass": "#1E4B42"
+  },
+  "background_treatment": {
+    "base": "near-black to deep teal",
+    "gradient": "soft multi-point emerald ambient glow",
+    "glow_position": "primarily top-right, sometimes bottom-left",
+    "texture": "subtle fine grain", "vignette": "gentle dark edges", "contrast": "high"
+  },
+  "typography": {
+    "family": "Inter, Manrope, Aptos",
+    "cover_title": {"size_pt": 44, "weight": "bold", "color": "#63F5B0"},
+    "heading": {"size_pt": 27, "weight": "semibold", "color": "#F5FAF8"},
+    "statement": {"size_pt": 35, "weight": "light", "color": "#F5FAF8"},
+    "body": {"size_pt": 14, "color": "#B6C9C4"},
+    "metric": {"size_pt": 30, "weight": "bold", "color": "#63F5B0"}
+  },
+  "layout": {
+    "style": "cinematic editorial minimalism", "whitespace": "high",
+    "density": "low-to-medium", "alignment": "precise",
+    "cards": "translucent emerald panels", "corners": "slightly rounded",
+    "borders": "minimal",
+    "preferred_compositions": ["Oversized asymmetric headline", "Three-column KPI cards",
+      "Three-step process diagrams", "Centered strategic statements",
+      "Three-column comparison matrices", "2x2 benefit grids",
+      "Horizontal quarterly roadmaps", "Minimal ownership timelines"]
+  },
+  "graphics": {
+    "icons": "minimal mint outline icons", "charts": "dark high-contrast editable charts",
+    "diagrams": "thin connectors and glowing nodes",
+    "callouts": "mint highlight strips with dark text",
+    "effects": ["diffused emerald glow", "subtle glass transparency", "fine-grain atmosphere",
+      "soft gradient card fills", "minimal network patterns"]
+  },
+  "slide_patterns": ["cover", "agenda", "problem_statement", "market_signals", "current_state",
+    "strategic_statement", "competitive_gap", "value_proposition", "business_outcomes",
+    "roadmap", "ownership_timeline"],
+  "pptx_requirements": {"editable_text": true, "editable_shapes": true, "editable_charts": true,
+    "minimum_body_text_pt": 14, "consistent_margins": true, "avoid_text_overflow": true,
+    "background_image_allowed_for_glow_only": true},
+  "avoid": ["Bright multicolor palettes", "White-dominant backgrounds", "Heavy borders",
+    "Dense paragraphs", "Unnecessary 3D illustrations", "Tiny text", "Low-contrast captions",
+    "Flattened slide screenshots"]
 }
 ```
 
