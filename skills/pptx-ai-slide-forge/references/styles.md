@@ -802,7 +802,8 @@ em → the `spc` XML attribute takes 1/100 pt: `spc = int(-0.04 * size_pt * 100)
 
 ```json
 {
-  "style_name": "",
+  "style_id": "",
+  "name": "",
   "style_category": "",
   "canvas": {"aspect_ratio": "16:9", "resolution": {"width": 1920, "height": 1080},
              "outer_background": ""},

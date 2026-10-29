@@ -236,7 +236,8 @@ Every row below shipped once. Symptom → cause → fix.
 - Content discipline rules above are gates, not suggestions.
 - One accent color family per style; exact HEX from the spec; no icons or clip-art;
   no slide borders.
-- Body text ≥ 12.5 pt, micro labels ≥ 9.5 pt.
+- Body text ≥ 12.5 pt on dark themes (light corporate styles may go to 12 pt when
+  their spec says so — the style spec wins); micro labels ≥ 9.5 pt.
 - Fix loops: reviewer findings go back to the builder, then re-render. Reviewer
   findings = not done.
 - Git: make intermediate commits per completed unit (engine, example, docs) — the

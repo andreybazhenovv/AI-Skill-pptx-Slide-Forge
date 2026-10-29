@@ -39,7 +39,9 @@ python3 ../../scripts/qa_check.py ../../scripts/spec-driven-development-ai-agent
   final thesis);
 - render QA: all 8 slides inspected; two fix rounds (label-capsule widths for
   tracking+caps, `REFACTOR` pill wrap) — then clean;
-- luminance: title strips 4.6–11.5/255, body zones 12.4–24.3/255.
+- luminance (fresh run): title strips 5.1–11.7/255, content zones 15.3–24.3/255;
+  the hero headline zone runs brighter (~30/255) by design — white text keeps
+  ~10:1 contrast there.
 
 Use this outline as the pattern: one argument across eight action titles, one visual
 idea per slide, honest statuses, conclusions last.
