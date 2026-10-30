@@ -25,7 +25,7 @@ flows, composable shape layers), then an honest QA loop — every slide rendered
 and actually inspected, text extracted and checked, geometry linted. Everything in
 `scripts/` ran in production on a real 8-slide deck before being packaged.
 
-The skill ships **four complete style specifications** (`references/styles.md`):
+The skill ships **five complete style specifications** (`references/styles.md`):
 Midnight Electric Blue, NovaPay — Liquid Electric Blue, Clean Blue Tech (light
 corporate), Dark Emerald Strategy — plus a recipe for authoring new styles with AI.
 
@@ -61,7 +61,7 @@ Follow all seven steps. Do not skip gates.
 
 - Pick a built-in style from [`references/styles.md`](references/styles.md) or write
   a custom spec using the recipe at the end of that file.
-- Light styles (e.g. Clean Blue Tech) skip the texture engine: flat backgrounds +
+- Light styles (e.g. Clean Blue Tech) run the liquid engine in light mode: white base, pale washes, no vignette crush — luminance caps don't apply; judge contrast instead: flat backgrounds +
   vector decor overlays; the luminance logic inverts (keep text zones clean-light,
   accents sparse at ~15%).
 - Extract the style into theme tokens (colors, font, radius, alpha) at the top of
@@ -247,7 +247,7 @@ Every row below shipped once. Symptom → cause → fix.
 
 | File | Read when |
 |---|---|
-| [`references/styles.md`](references/styles.md) | choosing or writing a visual style (four full specs + AI-authoring recipe) |
+| [`references/styles.md`](references/styles.md) | choosing or writing a visual style (five full specs + AI-authoring recipe) |
 | [`references/background-engine.md`](references/background-engine.md) | writing background configs; tuning ribbons/layers; luminance targets |
 | [`references/slide-patterns.md`](references/slide-patterns.md) | laying out slides; glass/accent recipes; tables; vector decor; XML tricks |
 | [`references/qa-and-toolchain.md`](references/qa-and-toolchain.md) | rendering, text QA, lint, dependencies, platform pitfalls |

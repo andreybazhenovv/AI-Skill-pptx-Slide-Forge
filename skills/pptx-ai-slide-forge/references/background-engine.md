@@ -65,7 +65,7 @@ darkening zones, vignette and fine noise.
   lines" = rejected failure mode.
 - Width multiplier ×1.5 is inside the engine; an early iteration without it looked
   like thin laser streaks (see the style's `negative_prompt`).
-- Glows multiplied ×1.35; base gradient ×0.98 with stops
+- Glows: alpha applied directly with a power falloff; base gradient ×0.98 with stops
   `#03091B → #061232 → #08266E → #0B3EC0`.
 - Hero front ribbon: two sine waves for an S-curve, plus a separate thin (`w0≈0.16`)
   near-white streak ribbon offset by phase — the "almost white blue highlight".
@@ -159,4 +159,4 @@ of the farthest row; nearer rows brighten to 1.0), `fill_color`, `fill_alpha`
 | Content slide | `dots` corner field (+ optional quiet `arc_field`) |
 | Data / terrain | `wireframe` heightfield in a corner band |
 
-Worked configs: [`examples/shape-gallery/textures_config.py`](../../examples/shape-gallery/textures_config.py).
+Worked configs: [`examples/shape-gallery/textures_config.py`](../examples/shape-gallery/textures_config.py).
