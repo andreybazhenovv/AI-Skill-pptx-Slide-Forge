@@ -30,7 +30,7 @@ from pptx.enum.shapes import MSO_SHAPE
 from pptx.oxml.ns import qn
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-ASSETS = os.path.join(BASE, "assets")
+ASSETS = os.path.normpath(os.path.join(BASE, os.pardir, "assets"))
 OUT_PPTX = os.path.join(BASE, "spec-driven-development-ai-agents.pptx")
 
 
