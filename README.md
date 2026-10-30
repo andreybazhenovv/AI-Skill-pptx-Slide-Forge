@@ -200,24 +200,37 @@ All scripts are battle-tested on a real deck; adapt, don't rewrite:
 
 Details and known platform pitfalls: [`skills/pptx-ai-slide-forge/references/qa-and-toolchain.md`](skills/pptx-ai-slide-forge/references/qa-and-toolchain.md).
 
+## Skills in this repo — three, one pipeline
+
+| Skill | Role |
+|---|---|
+| [`skills/deck-intake`](skills/deck-intake/SKILL.md) | dialogue: design, theme, composition, size → **design brief** (style JSON + outline) |
+| [`skills/pptx-ai-slide-forge`](skills/pptx-ai-slide-forge/SKILL.md) | build: procedural backgrounds, glass surfaces, QA loop → **the deck** |
+| [`skills/deck-polish`](skills/deck-polish/SKILL.md) | improve: audit + batched improvement plan → **patched/restyled deck** |
+
+Install any subset; the skills cross-reference each other by name.
+
 ## Repository structure
 
 ```
 pptx-AI-Slide-Forge/
 ├── README.md                        # this file
 ├── LICENSE                          # MIT
-├── docs/design.md                   # design decisions behind the skill
-└── skills/pptx-ai-slide-forge/
-    ├── SKILL.md                     # agent-facing workflow (entry point)
-    ├── scripts/                     # make_textures.py, build_deck.py, qa_check.py, render_qa.sh
-    ├── references/                  # styles.md, background-engine.md, slide-patterns.md, qa-and-toolchain.md
-    ├── assets/                      # sample backgrounds (five styles)
-    ├── examples/english-demo/       # 3-slide EN demo (NovaPay style)
-    ├── examples/clean-blue-tech/    # 3-slide EN demo (light corporate)
-    ├── examples/dark-emerald-strategy/  # 3-slide EN demo (emerald roadmap)
-    ├── examples/obsidian-ember/     # 3-slide EN demo (ember industrial editorial)
-    ├── examples/shape-gallery/      # v1.1 shape layers showcase configs
-    └── examples/sdd-deck/           # worked example: 8-slide SDD deck (configs + content outline)
+├── docs/design.md                   # design decisions behind the skills
+├── docs/images/                     # example renders (all five styles)
+└── skills/
+    ├── pptx-ai-slide-forge/         # the forge (entry point, five styles)
+    │   ├── SKILL.md                     # agent-facing workflow
+    │   ├── scripts/                     # make_textures, build_deck, qa_check, render_qa
+    │   ├── references/                  # styles, background engine, patterns, QA
+    │   ├── assets/                      # sample backgrounds (five styles)
+    │   └── examples/                    # five demos (one per style) + shape gallery
+    ├── deck-intake/                 # dialogue → design brief
+    │   ├── SKILL.md
+    │   └── references/intake-catalog.md
+    └── deck-polish/                 # audit + improve existing decks
+        ├── SKILL.md
+        └── references/audit-guide.md
 ```
 
 ## Dependencies
