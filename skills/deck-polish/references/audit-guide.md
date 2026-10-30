@@ -27,7 +27,7 @@ a verdict.
 
 ### Typography
 - ≤ 2 font families; sizes from a scale (not arbitrary)
-- body ≥ 12 pt; captions ≥ 9 pt
+- body ≥ 12.5 pt on dark themes (light corporate styles may use 12 pt per their spec — the style spec wins); captions ≥ 9.5 pt
 - hierarchy by size/weight, not by random emphasis
 - typographic dashes/quotes (— «» “”), no hyphens as dashes
 

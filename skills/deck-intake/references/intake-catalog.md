@@ -37,11 +37,11 @@ Present the five built-ins as one-liners, then recommend:
 
 | Style | Mood | Use when |
 |---|---|---|
-| Midnight Electric Blue | premium tech, dark editorial | tech/product talks |
-| NovaPay — Liquid Electric Blue | premium fintech, liquid glass | fintech, SaaS |
-| Clean Blue Tech | light corporate, editorial | enterprise, light rooms |
-| Dark Emerald Strategy | executive roadmap, emerald | strategy, exec reviews |
-| Obsidian Ember | industrial editorial, ember | industrial, hardware, bold |
+| `midnight-electric-blue` | premium tech, dark editorial | tech/product talks |
+| `novapay-liquid-electric-blue` | premium fintech, liquid glass | fintech, SaaS |
+| `blue-tech-corporate` | light corporate, editorial | enterprise, light rooms |
+| `dark-emerald-strategy` | executive roadmap, emerald | strategy, exec reviews |
+| `obsidian-ember` | industrial editorial, ember | industrial, hardware, bold |
 
 Custom: offer the AI-authoring recipe (`styles.md` → "Authoring a new style
 JSON with AI") — draft the JSON, validate on one test slide.
@@ -65,6 +65,13 @@ Deck language (follows the material unless told otherwise), title, author
 block (or none), footers (page numbers on/off), forbidden strings (e.g.
 "Thank you").
 
+| Option | Recommendation when |
+|---|---|
+| Language = material's language | default; ask only when it differs from the audience's |
+| Author block | include for external talks; omit for internal |
+| Footers with page numbers | on for decks > 5 slides |
+| Forbidden strings | always include "Thank you" and the material's banned terms |
+
 ## 2. Outline discipline
 
 - **Action titles**: complete sentences stating the takeaway — never topic
@@ -82,7 +89,7 @@ block (or none), footers (page numbers on/off), forbidden strings (e.g.
 {
   "style": {"style_id": "<built-in id>", "name": "", "custom": false,
             "custom_spec": null},
-  "deck": {"title": "", "language": "ru", "slides": 8, "aspect": "16:9",
+  "deck": {"title": "", "language": "ru", "slides": 8, "aspect": "16:9",  // 16:9 is the only supported aspect
            "author_block": null, "footer": true,
            "forbid": ["Thank you"], "key_strings": ["NOT RUN"]},
   "outline": [

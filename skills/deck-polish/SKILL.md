@@ -68,7 +68,8 @@ Batched, each item with options and a recommendation:
   content 1:1. Best when the user wants a new look.
 - **Rebuild** — for decks originally built by pptx-ai-slide-forge: regenerate
   from the config with fixes folded in. Fastest full-quality path when
-  available.
+  available. Precondition: the deck's build script/config still exist — if
+  not, fall back to restyle (the config is not recoverable from a bare pptx).
 
 Mixed plans are normal (e.g. patch the content slides, restyle the section
 dividers).

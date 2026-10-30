@@ -33,6 +33,15 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 ASSETS = os.path.join(BASE, "assets")
 OUT_PPTX = os.path.join(BASE, "spec-driven-development-ai-agents.pptx")
 
+
+def _require_assets():
+    if not os.path.isdir(ASSETS):
+        raise SystemExit(
+            f"backgrounds not found: {ASSETS}\n"
+            "generate them first: python3 ../../scripts/make_textures.py "
+            "--config <config.py> --out ../../assets")
+
+
 EMU_IN = 914400
 
 
@@ -262,12 +271,12 @@ def action_title(slide, text, y=0.78):
         [{"runs": [(text, 26, WHITE, -90)], "ls": 1.02}])
 
 
-def footer(slide, n, with_label=True):
+def footer(slide, n, with_label=True, total=8):
     if with_label:
         txt(slide, ML, 7.08, 5.0, 0.24,
             [{"runs": [("GOS · SPEC-DRIVEN DEVELOPMENT", 9.5, MUTED, 150)], "ls": 1.0}])
     txt(slide, 11.28, 7.08, 1.5, 0.24,
-        [{"runs": [(f"{n:02d} / 08", 9.5, MUTED, 150)], "ls": 1.0, "align": PP_ALIGN.RIGHT}])
+        [{"runs": [(f"{n:02d} / {total:02d}", 9.5, MUTED, 150)], "ls": 1.0, "align": PP_ALIGN.RIGHT}])
     rect(slide, ML, 7.02, TITLE_W, 0.012, DIVIDER)
 
 
@@ -275,6 +284,7 @@ prs = Presentation()
 prs.slide_width = IN(13.333)
 prs.slide_height = IN(7.5)
 BLANK = prs.slide_layouts[6]
+_require_assets()
 _slide_no = 0
 
 

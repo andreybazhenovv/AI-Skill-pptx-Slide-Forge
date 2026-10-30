@@ -27,7 +27,8 @@ and actually inspected, text extracted and checked, geometry linted. Everything 
 
 The skill ships **five complete style specifications** (`references/styles.md`):
 Midnight Electric Blue, NovaPay — Liquid Electric Blue, Clean Blue Tech (light
-corporate), Dark Emerald Strategy — plus a recipe for authoring new styles with AI.
+corporate), Dark Emerald Strategy, Obsidian Ember (industrial editorial) — plus a
+recipe for authoring new styles with AI.
 
 ## When to Use
 

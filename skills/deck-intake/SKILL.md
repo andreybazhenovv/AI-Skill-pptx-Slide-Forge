@@ -44,7 +44,7 @@ Ask **one message, 3–6 questions**, each with options and your recommendation:
 
 1. **Purpose & audience** — inform / pitch / teach; who watches, what they decide
 2. **Size** — slide count range with a recommendation from the material's density
-3. **Style** — the five built-in specs (`references/styles.md`) or a custom one
+3. **Style** — the five built-in specs (see the forge's references/styles.md) or a custom one
    (author it with the AI recipe in the same file); dark vs light guidance
 4. **Composition** — per slide role (hero cover, contents grid, section dividers,
    KPI/exhibit slides, roadmap, conclusions); what the material supports
@@ -57,23 +57,28 @@ a single "ок на все рекомендации" — that is approval, do no
 
 - Built-in: pick from the five specs, show the user a one-line mood summary each
 - Custom: draft the style JSON per the authoring recipe in
-  [`references/styles.md`](../../pptx-ai-slide-forge/references/styles.md) and
+  [`references/styles.md`](../pptx-ai-slide-forge/references/styles.md) and
   validate it on one test slide before committing to it
 
 ### 4. Produce the design brief
 
 ```json
 {
-  "style": {"style_id": "novapay-liquid-electric-blue", "custom": false},
+  "style": {"style_id": "novapay-liquid-electric-blue",
+            "name": "NovaPay — Liquid Electric Blue", "custom": false,
+            "custom_spec": null},
   "deck": {"title": "", "language": "ru", "slides": 8, "aspect": "16:9",
-           "author_block": null, "footer": true},
+           "author_block": null, "footer": true,
+           "forbid": ["Thank you"], "key_strings": ["NOT RUN"]},
   "outline": [
     {"n": 1, "title": "action title", "content": "what goes on the slide",
      "visual": "background / composition / exhibit"}
   ],
-  "qa": {"contains": ["key strings"], "forbid": ["Thank you"]}
+  "handoff": {"skill": "pptx-ai-slide-forge", "steps": "SKILL.md 3-6"}
 }
 ```
+
+The schema is canonical per [`references/intake-catalog.md`](references/intake-catalog.md) §3 — the QA plan lives in `deck` (`key_strings` / `forbid`), and `qa_check.py --contains/--forbid` consume them directly.
 
 Run the ghost deck test on the outline (titles alone must tell the argument).
 Fix the outline until it passes — then, and only then, hand off.
